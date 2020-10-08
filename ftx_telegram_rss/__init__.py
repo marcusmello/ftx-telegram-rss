@@ -8,7 +8,7 @@ def get_response(endpoint: str):
             return response
 
 
-def get_listed_futures_names()->list:
+def get_all_listed_futures_names()->list:
 
     endpoint = "https://ftx.com/api/futures"
 
