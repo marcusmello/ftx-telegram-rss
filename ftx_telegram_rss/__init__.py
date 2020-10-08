@@ -3,35 +3,53 @@ __version__ = "0.1.0"
 import requests
 
 
-class Future:
-    name = None
-    funding_rate = None
-
-
 def get_response(endpoint: str):
     with requests.get(endpoint) as response:
         if response.status_code == 200:
             return response
 
 
-def get_all_listed_futures_names() -> list:
+class Futures:
+    def __init__(self):
+        self.listed_futures_endpoint = "https://ftx.com/api/futures"
+        self.future_detail_endpoint = "https://ftx.com/api/futures/{}/stats"
+        self.OUTPUT_NUMBER = 3
+        self._funding_rate_key = "nextFundingRate"
+        self._futures_names = self.get_all_listed_futures_names()
 
-    endpoint = "https://ftx.com/api/futures"
+    def get_all_listed_futures_names(self) -> list:
+        futures = (get_response(self.listed_futures_endpoint)).json()
 
-    futures = (get_response(endpoint)).json()
+        return [future["name"] for future in futures["result"]]
 
-    return [future["name"] for future in futures["result"]]
+    def _future(self, name):
+        future_dict = (
+            get_response(self.future_detail_endpoint.format(name))
+        ).json()
 
+        funding_rate = future_dict["result"][self._funding_rate_key]
 
-_endpoint = "https://ftx.com/api//futures/{}/stats"
+        return (name, funding_rate)
 
+    def _original_funding_rate_list(self):
+        funding_rate_list = []
 
-def make_future(name) -> Future:
-    future = Future()
-    future.name = name
+        for name in self._futures_names:
+            try:
+                funding_rate_list.append(self._future(name))
 
-    future_dict = (get_response(_endpoint.format(name))).json()
+            except:  # Exception as e:
+                pass
+                # print(e)
 
-    future.funding_rate = future_dict["result"]["nextFundingRate"]
+        return funding_rate_list
 
-    return future
+    def funding_rate_list(self):
+        _list = sorted(
+            self._original_funding_rate_list(), key=lambda future: future[1]
+        )[::-1]
+
+        _top = _list[: self.OUTPUT_NUMBER]
+        _bottom = _list[-self.OUTPUT_NUMBER :]
+
+        return _top + _bottom
