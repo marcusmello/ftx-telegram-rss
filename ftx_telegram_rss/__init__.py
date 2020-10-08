@@ -1,5 +1,5 @@
 __version__ = "0.1.0"
-
+import pendulum
 import requests
 
 
@@ -9,12 +9,40 @@ def get_response(endpoint: str):
             return response
 
 
+def display_futures(rich_list) -> str:
+
+    return "".join(
+        ["{} ({})\n".format(future[0], future[1]) for future in rich_list]
+    )
+
+
+class RichList:
+    top = []
+    bottom = []
+
+    def as_list(self):
+        return self.top + self.bottom
+
+    def to_formatted_text(self) -> str:
+        _now = pendulum.now().to_datetime_string()
+        msg_template = """{}\n\nTop {}:\n\n{}\n\nBottom {}:\n\n{}"""
+
+        return msg_template.format(
+            _now,
+            len(self.top),
+            display_futures(self.top),
+            len(self.bottom),
+            display_futures(self.bottom),
+        )
+
+
 class Futures:
     def __init__(self):
         self.listed_futures_endpoint = "https://ftx.com/api/futures"
         self.future_detail_endpoint = "https://ftx.com/api/futures/{}/stats"
         self.OUTPUT_NUMBER = 3
         self._funding_rate_key = "nextFundingRate"
+        # TODO: Get from .env and treat for nonexistent future_name in list
         self._futures_names = self.get_all_listed_futures_names()
 
     def get_all_listed_futures_names(self) -> list:
@@ -38,18 +66,24 @@ class Futures:
             try:
                 funding_rate_list.append(self._future(name))
 
-            except:  # Exception as e:
-                pass
-                # print(e)
+            except:  # The notable exception here is a nonexistent
+                pass  # 'nextFundingRate' key in 'future_dict["result"]'
 
         return funding_rate_list
 
     def funding_rate_list(self):
-        _list = sorted(
-            self._original_funding_rate_list(), key=lambda future: future[1]
-        )[::-1]
+        rich_list = RichList()
 
-        _top = _list[: self.OUTPUT_NUMBER]
-        _bottom = _list[-self.OUTPUT_NUMBER :]
+        raw_list = self._original_funding_rate_list()
 
-        return _top + _bottom
+        _list = sorted(raw_list, key=lambda future: future[1], reverse=True)
+
+        n_top = n_bottom = self.OUTPUT_NUMBER
+        if len(_list) < self.OUTPUT_NUMBER:
+            n_top = int(len(_list) / 2)
+            n_bottom = len(_list) - n_top
+
+        rich_list.top = _list[:n_top]
+        rich_list.bottom = _list[-n_bottom:]
+
+        return rich_list
