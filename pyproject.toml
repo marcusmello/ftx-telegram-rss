@@ -1,14 +1,31 @@
 [tool.poetry]
 name = "ftx-telegram-rss"
 version = "0.1.0"
-description = ""
-authors = ["marcusmello <mandealista@gmail.com>"]
+description = "Periodic monitoring funding rates from FTX exchange and broadcast it through telegram"
+authors = ["Marcus Mello <marcus@vintem.tech>"]
+
+license = "GPL-3.0-or-later"
+readme = "README.md"
+homepage = "https://github.com/marcusmello/ftx-telegram-rss"
+repository = "https://github.com/marcusmello/ftx-telegram-rss"
+keywords = ["cryptocurrencies",
+            "telegram",
+            "ftx",
+            "Funding Alerter",
+            "rss",
+            "finance"]
 
 [tool.poetry.dependencies]
 python = "^3.8"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"
+ipykernel = "^5.3.4"
+jupyter = "^1.0.0"
+
+[tool.dephell.main]
+from = {format = "poetry", path = "pyproject.toml"}
+to = {format = "pipfile", path = "Pipfile"}
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
