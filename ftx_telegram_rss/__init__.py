@@ -8,13 +8,13 @@ def get_response(endpoint: str):
             return response
 
 
-def get_instruments_names_list():
+def get_listed_futures_names()->list:
 
     endpoint = "https://ftx.com/api/futures"
 
-    instruments = (get_response(endpoint)).json()
+    futures = (get_response(endpoint)).json()
 
     return [
-        instrument['name'] for
-        instrument in instruments['result']
+        future['name'] for
+        future in futures['result']
     ]
