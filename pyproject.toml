@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "ftx-telegram-rss"
-version = "0.1.0"
+version = "0.1.1-alpha.0"
 description = "Periodic monitoring funding rates from FTX exchange and broadcast it through telegram"
 authors = ["Marcus Mello <marcus@vintem.tech>"]
 
