@@ -1,7 +1,13 @@
 __version__ = "0.1.0"
+
+import time
 import pendulum
 import requests
 import telegram
+from environs import Env
+
+env = Env()
+env.read_env()
 
 
 def get_response(endpoint: str):
@@ -21,7 +27,7 @@ class RichList:
     top = []
     bottom = []
 
-    def as_list(self):
+    def as_list(self) -> list:
         return self.top + self.bottom
 
     def as_formatted_text(self) -> str:
@@ -39,11 +45,15 @@ class RichList:
 
 class Futures:
     def __init__(self):
+        self._funding_rate_key = "nextFundingRate"
         self.listed_futures_endpoint = "https://ftx.com/api/futures"
         self.future_detail_endpoint = "https://ftx.com/api/futures/{}/stats"
-        self.OUTPUT_NUMBER = 3
-        self._funding_rate_key = "nextFundingRate"
-        # TODO: Get from .env and treat for nonexistent future_name in list
+        self.output_number = env.int("OUTPUT_NUMBER")
+        self.output_treshold = env.float("OUTPUT_THRESHOLD")
+        self._get_futures_names()
+
+    def _get_futures_names(self):
+        _input_list = env.list("LIST_OF_FUTURES")
         self._futures_names = self.get_all_listed_futures_names()
 
     def get_all_listed_futures_names(self) -> list:
@@ -79,8 +89,9 @@ class Futures:
 
         _list = sorted(raw_list, key=lambda future: future[1], reverse=True)
 
-        n_top = n_bottom = self.OUTPUT_NUMBER
-        if len(_list) < self.OUTPUT_NUMBER:
+        n_top = n_bottom = self.output_number
+
+        if len(_list) < self.output_number:
             n_top = int(len(_list) / 2)
             n_bottom = len(_list) - n_top
 
@@ -97,3 +108,35 @@ class TelegramReport:
 
     def send(self, message):
         self.bot.send_message(chat_id=self.chat_id, text=message)
+
+
+class CheckAndReport:
+    def __init__(self) -> None:
+        self.msg = None
+        self.futures = Futures()
+
+        try:
+            self.telegram_report = TelegramReport(
+                token=env.str("TELEGRAM_TOKEN"),
+                chat_id=env.int("TELEGRAM_CHAT_ID"),
+            )
+        except:
+            self.telegram_report = None
+
+    def do_report(self, msg):
+        print(msg)
+        if self.telegram_report:
+            self.telegram_report.send(msg)
+
+    def run(self):
+        while True:
+            futures_funding_rate_list = self.futures.funding_rate_list()
+
+            self.do_report(futures_funding_rate_list.as_formatted_text())
+
+            time.sleep(env.int("UPDATE_DELAY"))
+
+
+if __name__ == "__main__":
+    check_and_report = CheckAndReport()
+    check_and_report.run()
