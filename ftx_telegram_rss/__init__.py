@@ -17,7 +17,6 @@ def get_response(endpoint: str):
 
 
 def display_futures(rich_list) -> str:
-
     return "".join(
         ["{} ({})\n".format(future[0], future[1]) for future in rich_list]
     )
@@ -58,7 +57,6 @@ class Futures:
 
     def get_all_listed_futures_names(self) -> list:
         futures = (get_response(self.listed_futures_endpoint)).json()
-
         return [future["name"] for future in futures["result"]]
 
     def _future(self, name):
@@ -67,7 +65,6 @@ class Futures:
         ).json()
 
         funding_rate = future_dict["result"][self._funding_rate_key]
-
         return (name, funding_rate)
 
     def _original_funding_rate_list(self):
@@ -86,11 +83,9 @@ class Futures:
         rich_list = RichList()
 
         raw_list = self._original_funding_rate_list()
-
         _list = sorted(raw_list, key=lambda future: future[1], reverse=True)
 
         n_top = n_bottom = self.output_number
-
         if len(_list) < self.output_number:
             n_top = int(len(_list) / 2)
             n_bottom = len(_list) - n_top
@@ -131,9 +126,7 @@ class CheckAndReport:
     def run(self):
         while True:
             futures_funding_rate_list = self.futures.funding_rate_list()
-
             self.do_report(futures_funding_rate_list.as_formatted_text())
-
             time.sleep(env.int("UPDATE_DELAY"))
 
 
