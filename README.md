@@ -12,7 +12,7 @@ A solução foi concebida como um módulo único, com 3 classes principais:
 objeto de mais elevado nível de abstração; A partir de uma instância de
 ***CheckAndReport***, é possível rodar um "sentinela" para escutar e transmitir
 **funding rates** da FTX, tanto pelo console, quanto pelo
-[*telegram*](##Configurando o bot telegram)
+[*telegram*](#Configurando-o-bot-telegram)
 
 Uma versão segue rodando em desenvolvimento, emitindo relatórios a cada 3h para
 um grupo no telegram; [clique](https://t.me/joinchat/BsaPrRylCgEXuNZFrKQDCQ)
@@ -78,8 +78,7 @@ check_and_report = CheckAndReport()
 check_and_report.run()
 ```
 
-Se preferir, é possível rodar no [jupyter notebook](## Rodando no Jupyter
-Notebook).
+Se preferir, é possível rodar no [jupyter notebook](#Rodando-no-Jupyter-Notebook).
 
 ## Rodando com configurações customizadas
 
