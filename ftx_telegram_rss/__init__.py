@@ -1,6 +1,7 @@
 __version__ = "0.1.0"
 import pendulum
 import requests
+import telegram
 
 
 def get_response(endpoint: str):
@@ -23,7 +24,7 @@ class RichList:
     def as_list(self):
         return self.top + self.bottom
 
-    def to_formatted_text(self) -> str:
+    def as_formatted_text(self) -> str:
         _now = pendulum.now().to_datetime_string()
         msg_template = """{}\n\nTop {}:\n\n{}\n\nBottom {}:\n\n{}"""
 
@@ -87,3 +88,12 @@ class Futures:
         rich_list.bottom = _list[-n_bottom:]
 
         return rich_list
+
+
+class TelegramReport:
+    def __init__(self, token, chat_id) -> None:
+        self.chat_id = chat_id
+        self.bot = telegram.Bot(token)
+
+    def send(self, message):
+        self.bot.send_message(chat_id=self.chat_id, text=message)
