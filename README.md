@@ -60,7 +60,7 @@ virtual fazendo:
 
     poetry run python
 
-3.2 - Importe o pacote
+3.2 - Importe a classe responsável pelo monitoramento e *report*:
 
 ```python
 from ftx_telegram_rss import CheckAndReport
