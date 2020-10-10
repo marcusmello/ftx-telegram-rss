@@ -49,7 +49,6 @@ class RichList:
 
 class Futures:
     __slots__ = [
-        "_funding_rate_key",
         "_list_all_futures_endpoint",
         "_future_funding_rates_endpoint",
         "_output_number",
@@ -58,7 +57,6 @@ class Futures:
     ]
 
     def __init__(self):
-        self._funding_rate_key = "nextFundingRate"
         self._list_all_futures_endpoint = "https://ftx.com/api/futures"
         self._future_funding_rates_endpoint = (
             "https://ftx.com/api/funding_rates"
