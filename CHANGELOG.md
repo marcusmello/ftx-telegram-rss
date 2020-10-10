@@ -26,7 +26,7 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [0.1.1-alpha.0] - 2020-10-09
 
-Starting point, see [release note](https://github.com/marcusmello/ftx-telegram-rss/releases/0.1.1-alpha.0)
+Starting point, see [release note](https://github.com/marcusmello/ftx-telegram-rss/releases/tag/0.1.1-alpha.0)
 
 ### Added
 

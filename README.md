@@ -14,7 +14,7 @@ objeto de mais elevado nível de abstração; A partir de uma instância de
 **funding rates** da FTX, tanto pelo console, quanto pelo
 [*telegram*](#Configurando-o-bot-telegram)
 
-Uma versão segue rodando em desenvolvimento, emitindo relatórios a cada 3h para
+Uma versão segue rodando em desenvolvimento, emitindo relatórios a cada 1h para
 um grupo no telegram; [clique](https://t.me/joinchat/BsaPrRylCgEXuNZFrKQDCQ)
 para se juntar ao grupo e acompanhar os relatórios.
 
@@ -60,7 +60,7 @@ virtual fazendo:
 
     poetry run python
 
-3.2 - Importe o pacote
+3.2 - Importe a classe responsável pelo monitoramento e *report*:
 
 ```python
 from ftx_telegram_rss import CheckAndReport
