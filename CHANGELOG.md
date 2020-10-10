@@ -24,6 +24,21 @@ adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ### Deprecated
 
+## [0.1.1-alpha.1] - 2020-10-10
+
+### Added
+
+### Changed
+
+### Fixed
+
+- Endpoint to request funding rates. See the [issue](https://github.com/marcusmello/ftx-telegram-rss/issues/10)
+
+### Removed
+
+### Deprecated
+
+
 ## [0.1.1-alpha.0] - 2020-10-09
 
 Starting point, see [release note](https://github.com/marcusmello/ftx-telegram-rss/releases/tag/0.1.1-alpha.0)
