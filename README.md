@@ -8,10 +8,9 @@ requisitos do exercício,
 [aqui](https://www.notion.so/Simple-FTX-Funding-Alerter-7b0c2400a58c4b2d887e615a281be708).
 
 A solução foi concebida como um módulo único, com 3 classes principais:
-***Futures***, ***TelegramReport*** e ***CheckAndReport***, sendo esta última o
-objeto de mais elevado nível de abstração; A partir de uma instância de
-***CheckAndReport***, é possível rodar um "sentinela" para escutar e transmitir
-**funding rates** da FTX, tanto pelo console, quanto pelo
+***Futures***, ***TelegramReport*** e ***CheckAndReport***; A partir de uma
+instância de ***CheckAndReport***, é possível rodar um "sentinela" para escutar
+e transmitir **funding rates** da FTX, tanto pelo console, quanto pelo
 [*telegram*](#Configurando-o-bot-telegram)
 
 Uma versão segue rodando em desenvolvimento, emitindo relatórios a cada 1h para
@@ -87,25 +86,3 @@ Se preferir, é possível rodar no [jupyter notebook](#Rodando-no-Jupyter-Notebo
 
 Para isto, basta abrir o arquivo de texto *".env"*, atribuindo os valores
 desejados às variáveis de ambiente.
-
-## Outros métodos úteis
-
-Elit esse voluptate ad mollit culpa mollit duis pariatur aliqua qui eiusmod esse
-magna. Id magna amet nostrud eiusmod elit. Exercitation exercitation consequat
-dolor nostrud amet incididunt in aliqua fugiat do ad. Velit do dolore excepteur
-amet. Nostrud ex magna ea ad ullamco. Aliqua nulla dolor aute quis ex laborum
-amet et velit elit qui amet.
-
-## Rodando no Jupyter Notebook
-
-Magna ex dolore laboris fugiat in eiusmod incididunt. Culpa mollit occaecat
-magna voluptate. Culpa quis ipsum minim eiusmod in reprehenderit labore. Labore
-eu voluptate consectetur ea nostrud ea incididunt laborum irure. Officia veniam
-enim voluptate esse reprehenderit velit minim et. Commodo excepteur id sunt
-magna dolore.
-
-## Configurando o bot telegram
-
-Laborum dolor sunt ex cillum nisi commodo sit. Reprehenderit amet quis ex dolor
-esse. Eu anim id sit commodo esse. Mollit reprehenderit qui laborum nulla.
-Consectetur commodo cupidatat in aliquip reprehenderit.
