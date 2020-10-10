@@ -1,4 +1,4 @@
-__version__ = "0.1.1-alpha.0"
+__version__ = "0.1.1-alpha.1"
 
 import time
 import pendulum
@@ -16,9 +16,15 @@ def get_response(endpoint: str):
             return response
 
 
-def display_futures(rich_list) -> str:
+def fancy_datetime(_dt) -> str:
+    _date = _dt.to_formatted_date_string()
+    _time = "{}00:00".format(_dt.to_time_string()[:-5])
+    return "[{} - {}]".format(_date, _time)
+
+
+def display_futures(_list: list) -> str:
     return "".join(
-        ["{} ({})\n".format(future[0], future[1]) for future in rich_list]
+        ["{} ({})\n".format(future[0], future[1]) for future in _list]
     )
 
 
@@ -30,11 +36,10 @@ class RichList:
         return self.top + self.bottom
 
     def as_formatted_text(self) -> str:
-        _now = pendulum.now().to_datetime_string()
         msg_template = """{}\n\nTop {}:\n\n{}\n\nBottom {}:\n\n{}"""
 
         return msg_template.format(
-            _now,
+            fancy_datetime(pendulum.now("UTC")),
             len(self.top),
             display_futures(self.top),
             len(self.bottom),
@@ -45,8 +50,8 @@ class RichList:
 class Futures:
     __slots__ = [
         "_funding_rate_key",
-        "_listed_futures_endpoint",
-        "_future_detail_endpoint",
+        "_list_all_futures_endpoint",
+        "_future_funding_rates_endpoint",
         "_output_number",
         "_output_treshold",
         "_futures_names",
@@ -54,8 +59,10 @@ class Futures:
 
     def __init__(self):
         self._funding_rate_key = "nextFundingRate"
-        self._listed_futures_endpoint = "https://ftx.com/api/futures"
-        self._future_detail_endpoint = "https://ftx.com/api/futures/{}/stats"
+        self._list_all_futures_endpoint = "https://ftx.com/api/futures"
+        self._future_funding_rates_endpoint = (
+            "https://ftx.com/api/funding_rates"
+        )
         self._output_number = env.int("OUTPUT_NUMBER")
         self._output_treshold = env.float("OUTPUT_THRESHOLD")
         self._get_futures_names()
@@ -64,8 +71,7 @@ class Futures:
         """The sanitization of the list of names is dispensed here, Since
         this should be a simple script that solves an exercise. The user
         is expected to list existing FTX futures names; otherwise,
-        nonexistent names will be ignored, due to the "try/catch" in
-        '_unsorted_filtered_funding_rate_list'. So, as long as there is
+        nonexistent names will be ignored. So, as long as there is
         a few correct names in the list, it will run smoothly.
         """
 
@@ -78,29 +84,32 @@ class Futures:
         )
 
     def get_all_listed_futures_names(self) -> list:
-        futures = (get_response(self._listed_futures_endpoint)).json()
+        futures = (get_response(self._list_all_futures_endpoint)).json()
         return [future["name"] for future in futures["result"]]
 
     def _unsorted_filtered_funding_rate_list(self) -> list:
-        funding_rate_list = []
+        futures_and_funding_rate_tuple_list = []
+        utc_now = pendulum.now("UTC")
+        fmt = "YYYY-MM-DDTHH:mm:ssZZ"
 
-        for name in self._futures_names:
+        _info = (get_response(self._future_funding_rates_endpoint)).json()
+        for result in _info["result"]:
             try:
-                future_dict = (
-                    get_response(self._future_detail_endpoint.format(name))
-                ).json()
+                future = result["future"]
+                rate = result["rate"]
+                _time = pendulum.from_format(result["time"], fmt)
+                delay = (utc_now - _time).as_interval()
 
-                funding_rate = float(
-                    future_dict["result"][self._funding_rate_key]
-                )
+                if (
+                    delay.hours < 1
+                    and rate > self._output_treshold
+                    and future in self._futures_names
+                ):
+                    futures_and_funding_rate_tuple_list.append((future, rate))
+            except:
+                pass
 
-                if funding_rate >= self._output_treshold:
-                    funding_rate_list.append((name, funding_rate))
-
-            except:  # The notable exception here is a nonexistent
-                pass  # 'nextFundingRate' key in 'future_dict["result"]'
-
-        return funding_rate_list
+        return futures_and_funding_rate_tuple_list
 
     def funding_rate_top_bottom_rich_list(self) -> RichList:
         rich_list = RichList()
